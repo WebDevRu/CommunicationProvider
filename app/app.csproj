@@ -7,15 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="WebClient\Components" />
+      <Folder Include="WebClient\Components\Auth\Admin" />
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Pages\Counter.razor" />
-      <AdditionalFiles Include="Pages\Error.cshtml" />
-      <AdditionalFiles Include="Pages\FetchData.razor" />
-      <AdditionalFiles Include="Pages\Index.razor" />
-      <AdditionalFiles Include="Pages\_Host.cshtml" />
       <AdditionalFiles Include="WebClient\Shared\MainLayout.razor" />
       <AdditionalFiles Include="WebClient\Shared\NavMenu.razor" />
       <AdditionalFiles Include="WebClient\Shared\SurveyPrompt.razor" />
@@ -27,10 +22,17 @@
       <_ContentIncludedByDefault Remove="WebClient\Pages\Counter.razor" />
       <_ContentIncludedByDefault Remove="WebClient\Pages\FetchData.razor" />
       <_ContentIncludedByDefault Remove="WebClient\Pages\Index.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\_Host.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Counter.razor" />
+      <_ContentIncludedByDefault Remove="Pages\FetchData.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Index.razor" />
+      <_ContentIncludedByDefault Remove="Pages\Login.razor" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="AntDesign" Version="0.12.7" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
     </ItemGroup>
 
 </Project>

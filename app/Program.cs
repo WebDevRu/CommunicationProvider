@@ -5,10 +5,14 @@ using app.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddAntDesign();
+
+builder.Services.AddRazorPages()
+    .AddRazorPagesOptions(options => {
+        options.RootDirectory = "/WebClient/Pages";
+    });
 
 var app = builder.Build();
 
