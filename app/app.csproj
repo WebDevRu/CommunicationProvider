@@ -6,4 +6,27 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="WebClient" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Counter.razor" />
+      <AdditionalFiles Include="Pages\Error.cshtml" />
+      <AdditionalFiles Include="Pages\FetchData.razor" />
+      <AdditionalFiles Include="Pages\Index.razor" />
+      <AdditionalFiles Include="Pages\_Host.cshtml" />
+      <AdditionalFiles Include="WebClient\Shared\MainLayout.razor" />
+      <AdditionalFiles Include="WebClient\Shared\NavMenu.razor" />
+      <AdditionalFiles Include="WebClient\Shared\SurveyPrompt.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="WebClient\Pages\Error.cshtml" />
+      <_ContentIncludedByDefault Remove="WebClient\Pages\_Host.cshtml" />
+      <_ContentIncludedByDefault Remove="WebClient\Pages\Counter.razor" />
+      <_ContentIncludedByDefault Remove="WebClient\Pages\FetchData.razor" />
+      <_ContentIncludedByDefault Remove="WebClient\Pages\Index.razor" />
+    </ItemGroup>
+
 </Project>
