@@ -1,0 +1,18 @@
+version: "3.6"
+
+services:
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    restart: "always"
+    environment:
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    expose:
+      - 1433
+    ports:
+      - "1433:1433"
+      - "1434:1434"
+      - "1431:1431"
+    volumes:
+      - C:\Users\nikra\Desktop\IS\MSSql\data:/var/opt/mssql/data
+      - C:\Users\nikra\Desktop\IS\MSSql\log:/var/opt/mssql/log

@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="WebClient\Components\Auth\Admin" />
-    </ItemGroup>
-
-    <ItemGroup>
       <AdditionalFiles Include="WebClient\Shared\MainLayout.razor" />
       <AdditionalFiles Include="WebClient\Shared\NavMenu.razor" />
       <AdditionalFiles Include="WebClient\Shared\SurveyPrompt.razor" />
