@@ -1,10 +1,9 @@
 ﻿@page "/"
 
-<PageTitle>Communication Provider</PageTitle>
+@using app.WebClient.Components.Info.NavbarComponent
+@using app.WebClient.Components.Info.MainInfoBlock
 
-<h1>Hello, world!</h1>
+<PageTitle>Оператор связи</PageTitle>
 
-Welcome to your new app.
-<Button Type="primary">Hello World!</Button>
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+<NavbarComponent />
+<MainInfoBlock />

@@ -1,0 +1,32 @@
+.menuitem {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.iconCont {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 20px;
+}
+
+.itemsRow {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 120px;
+    height: 31px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 16px 24px 16px 0;
+    float: left;
+}
