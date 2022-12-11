@@ -1,9 +1,12 @@
 @namespace app.WebClient.Components.Info.NavbarComponent
 
-
 <Header>
     <div class="headerRow">
-        <div class="logo"/>
+        <div class="logo">
+            <Text>
+                Связь
+            </Text>
+        </div>
         <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new[] { "2" })>
             <MenuItem Key="main_page">
                 <div class="menuitem">
@@ -46,6 +49,8 @@
     </div>
 </Header>
 
-@code {
-    
-}
+<style>
+    .ant-typography {
+        color:  white;
+    }
+</style>
