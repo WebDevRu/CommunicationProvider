@@ -1,6 +1,8 @@
 @namespace app.WebClient.Components.Auth.AdminLoginComponent
 @using System.ComponentModel.DataAnnotations;
+@using app.Core.Services;
 @using System.Text.Json;
+@using app.WebClient.Pages
 
 <div class="cont">
     <Card 
@@ -43,7 +45,12 @@
 
     private void OnFinish(EditContext editContext)
     {
-        Console.WriteLine($"Success:{JsonSerializer.Serialize(model)}");
+        var args = new LoginArgs();
+
+        args.Login = model.Username;
+        args.Password = model.Password;
+        
+        AdminAuth.PostLogin(args);
     }
 
     private void OnFinishFailed(EditContext editContext)
