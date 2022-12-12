@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace app.Core.Model;
+﻿namespace app.Core.Model;
+using Microsoft.EntityFrameworkCore;
 
 public partial class Admin
 {
@@ -14,4 +12,13 @@ public partial class Admin
     public DateTime LastLoginAt { get; set; }
 
     public string Email { get; set; } = null!;
+    
+    protected void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Admin>().HasData(new Admin
+        {
+            Password = "QWERTY123qwe",
+            Email = "nikrainev@gmail.com"
+        });
+    }
 }

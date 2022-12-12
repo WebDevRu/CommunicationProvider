@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations;
 @using app.Core.Services;
 @using System.Text.Json;
+@using app.Core.Model
 @using app.WebClient.Pages
 
 <div class="cont">
@@ -43,15 +44,12 @@
 
     private Model model = new Model();
 
-    private AdminAuth adminAuth = new (dbContext: new DBContext());
+    private AdminAuth adminAuth = new ();
 
     private void OnFinish(EditContext editContext)
     {
-        var args = new LoginArgs();
+        var args = new LoginArgs { Login = model.Username, Password = model.Password };
 
-        args.Login = model.Username;
-        args.Password = model.Password;
-        
         adminAuth.PostLogin(args);
     }
 

@@ -1,3 +1,5 @@
+using app.Core.Model;
+
 namespace app.Core.Services;
 public struct LoginArgs
 {
@@ -7,18 +9,14 @@ public struct LoginArgs
 
 public class AdminAuth
 {
-    private DBContext dbContext;
-    public AdminAuth(DBContext dbContext)
-    {
-        dbContext.Blogs.FirstOrDefault();
-    }
-    
+    MasterContext dbContext = new ();
+
     public async void PostLogin(LoginArgs args)
     {
-        var blogs = dbContext.Blogs.Find();
-        Console.WriteLine(blogs);
-        Console.WriteLine(args.Login);
-        Console.WriteLine(args.Password);
+        var admin = dbContext.Admins.Where(
+            a => a.Email == args.Login && a.Password == args.Password
+        ).FirstOrDefault();
+        
     }
 
 }
