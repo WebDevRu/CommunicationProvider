@@ -43,6 +43,8 @@
 
     private Model model = new Model();
 
+    private AdminAuth adminAuth = new (dbContext: new DBContext());
+
     private void OnFinish(EditContext editContext)
     {
         var args = new LoginArgs();
@@ -50,7 +52,7 @@
         args.Login = model.Username;
         args.Password = model.Password;
         
-        AdminAuth.PostLogin(args);
+        adminAuth.PostLogin(args);
     }
 
     private void OnFinishFailed(EditContext editContext)

@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using app.Data;
 
@@ -9,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddSingleton<DBContext>();
 
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddAntDesign();
