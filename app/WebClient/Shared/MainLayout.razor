@@ -3,6 +3,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using app.Core.Services;
 @using app.WebClient.State
+@using app.WebClient.Components.Admin
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject State.ApplicationState AppState;
 
@@ -10,12 +11,12 @@
 
 @if (isAuthed)
 {
-    <div class="page">
+    <div class="adminPage">
         <div class="sidebar">
-            <NavMenu />
+            <SideBar />
         </div>
 
-        <main>
+        <main class="adminMain">
             <div class="top-row px-4">
                 <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
             </div>
