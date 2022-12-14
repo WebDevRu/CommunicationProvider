@@ -1,7 +1,26 @@
-<h3>
-    Admin profile
-</h3>
+@namespace app.WebClient.Components.Admin
+
+@using app.Core.Services;
+@using app.Core.Model
+
+<Content>
+    <div class="site-layout-content">
+        <Statistic Title="Идентификатор" Value=@adminModel.Id />
+        <div class="spacer" />
+        <Statistic Title="Почта:" Value=@adminModel.Email/>
+        <div class="spacer" />
+        <Statistic Title="Дата регистрации:" 
+                   Value=@adminModel.RegisteredAt.ToString("MM/dd/yyyy HH:mm:ss")
+                   />
+    </div>
+</Content>
 
 @code {
-    
+    public Admin adminModel;
+    private AdminAuth adminAuth = new ();
+
+    protected override void OnInitialized()
+    {
+        adminModel = adminAuth.GetAdmin();
+    }
 }

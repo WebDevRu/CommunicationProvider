@@ -24,4 +24,9 @@ public class AdminAuth
 
         throw new InvalidOperationException("Logfile cannot be read-only");;
     }
+
+    public Admin GetAdmin()
+    {
+        return dbContext.Admins.FirstOrDefault();
+    }
 }
