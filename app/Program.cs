@@ -1,6 +1,8 @@
 using app.Core.Model;
 using Microsoft.AspNetCore.Components.Authorization;
 using app.Data;
+using Blazored.LocalStorage;
+using app.WebClient.State;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +11,13 @@ builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddSingleton<MasterContext>();
+builder.Services.AddSingleton<ApplicationState>();
 
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddAntDesign();
+
+builder.Services.AddBlazoredLocalStorage();   // local storage
+builder.Services.AddBlazoredLocalStorage(config => config.JsonSerializerOptions.WriteIndented = true);  // local storage
 
 builder.Services.AddRazorPages()
     .AddRazorPagesOptions(options => {

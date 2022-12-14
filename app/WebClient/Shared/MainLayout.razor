@@ -1,11 +1,14 @@
 ﻿@inherits LayoutComponentBase
 @using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@using app.Core.Services;
+@using app.WebClient.State
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject State.ApplicationState AppState;
 
 <PageTitle>app</PageTitle>
 
-@if (1 == 2)
+@if (isAuthed)
 {
     <div class="page">
         <div class="sidebar">
@@ -39,24 +42,43 @@ else
     
     private string authMessage;
     private string surnameMessage;
+    private AdminAuth adminAuth = new ();
     private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
 
+    private bool isAuthed = false;
+    
     private async Task GetClaimsPrincipalData()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        Console.WriteLine(user);
-
-        if (user.Identity.IsAuthenticated)
+        var login = await localStorage.GetItemAsync<string>("Login");
+        var password = await localStorage.GetItemAsync<string>("Password");
+        var args = new LoginArgs { Login = login, Password = password };
+        
+        try
         {
-            authMessage = $"{user.Identity.Name} is authenticated.";
-            claims = user.Claims;
-            surnameMessage =
-                $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
+            var admin = adminAuth.PostLogin(args);
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+        
+            if (user.Identity.IsAuthenticated)
+            {
+                authMessage = $"{user.Identity.Name} is authenticated.";
+                claims = user.Claims;
+                surnameMessage =
+                    $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
+                
+                isAuthed = true;
+                AppState.InitApp(UserTypes.Admin);
+                StateHasChanged();
+            }
+            else
+            {
+                authMessage = "The user is NOT authenticated.";
+            }
         }
-        else
+        catch (Exception e)
         {
-            authMessage = "The user is NOT authenticated.";
+            Console.WriteLine("auth error");
+            Console.WriteLine(e);
         }
     }
 

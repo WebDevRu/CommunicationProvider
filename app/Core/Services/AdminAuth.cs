@@ -11,12 +11,17 @@ public class AdminAuth
 {
     MasterContext dbContext = new ();
 
-    public async void PostLogin(LoginArgs args)
+    public Admin PostLogin(LoginArgs args)
     {
         var admin = dbContext.Admins.Where(
             a => a.Email == args.Login && a.Password == args.Password
         ).FirstOrDefault();
-        
-    }
 
+        if (admin != null)
+        {
+            return admin;
+        }
+
+        throw new InvalidOperationException("Logfile cannot be read-only");;
+    }
 }

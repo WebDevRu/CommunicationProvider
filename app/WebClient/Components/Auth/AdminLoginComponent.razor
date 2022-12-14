@@ -4,6 +4,8 @@
 @using System.Text.Json;
 @using app.Core.Model
 @using app.WebClient.Pages
+@inject IJSRuntime JsRuntime;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 <div class="cont">
     <Card 
@@ -46,11 +48,30 @@
 
     private AdminAuth adminAuth = new ();
 
+    private Admin _adminModel = new ();
+    
+    protected async Task WriteAuthCookies()
+    {
+        await localStorage.SetItemAsync("UserType", "admin");
+        await localStorage.SetItemAsync("Id", _adminModel?.Id);
+        await localStorage.SetItemAsync("Login", _adminModel?.Email);
+        await localStorage.SetItemAsync("Password", _adminModel?.Password);
+    }
+
     private void OnFinish(EditContext editContext)
     {
         var args = new LoginArgs { Login = model.Username, Password = model.Password };
 
-        adminAuth.PostLogin(args);
+        try
+        {
+            var admin = adminAuth.PostLogin(args);
+            _adminModel = admin;
+            WriteAuthCookies();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private void OnFinishFailed(EditContext editContext)

@@ -1,9 +1,24 @@
 ﻿@page "/"
 
-@using app.WebClient.Components.Info.NavbarComponent
-@using app.WebClient.Components.Info.MainInfoBlock
+@using app.WebClient.Components.Info.NavbarComponent;
+@using app.WebClient.Components.Info.MainInfoBlock;
+@using app.WebClient.State
+@inject ApplicationState AppState;
+@inject NavigationManager NavManager
 
 <PageTitle>Оператор связи</PageTitle>
 
 <NavbarComponent />
 <MainInfoBlock />
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        if (AppState.UserType == UserTypes.Admin)
+        {
+            NavManager.NavigateTo("/admin");
+        }
+        Console.WriteLine(AppState.IsAuth);
+    }
+}
