@@ -5,13 +5,14 @@
 
 <Content>
     <div class="site-layout-content">
-        <Statistic Title="Идентификатор" Value=@adminModel.Id />
-        <div class="spacer" />
+        <h1>Кабинет администратора</h1>
+        <div class="spacer"/>
+        <Statistic Title="Идентификатор" Value=@adminModel.Id/>
+        <div class="spacer"/>
         <Statistic Title="Почта:" Value=@adminModel.Email/>
-        <div class="spacer" />
-        <Statistic Title="Дата регистрации:" 
-                   Value=@adminModel.RegisteredAt.ToString("MM/dd/yyyy HH:mm:ss")
-                   />
+        <div class="spacer"/>
+        <Statistic Title="Дата регистрации:"
+                   Value=@adminModel.RegisteredAt.ToString("MM/dd/yyyy HH:mm:ss")/>
     </div>
 </Content>
 

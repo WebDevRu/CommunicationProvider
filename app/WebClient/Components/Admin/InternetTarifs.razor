@@ -1,5 +1,95 @@
-<h3>InternetTarifs</h3>
+@namespace app.WebClient.Components.Admin
 
-@code {
-    
+@using System.ComponentModel.DataAnnotations;
+@using app.Core.Services;
+@using app.Core.Model
+@using System.Text.Json;
+
+<Content>
+    <div class="site-layout-content">
+        <h1>Добавление интернет тарифа:</h1>
+        <div class="spacer"/>
+        
+        <div class="form">
+            <Form @ref="form"
+                  Model="@model"
+                  OnFinish="OnFinish"
+                  OnFinishFailed="OnFinishFailed"
+                  LabelColSpan="8"
+                  WrapperColSpan="16">
+                <FormItem Label="Лимит скорости мб/c">
+                    <Input @bind-Value="@context.LimitMb" />
+                </FormItem>
+                <FormItem Label="Название">
+                    <Input @bind-Value="@context.Title" />
+                </FormItem>
+                <FormItem Label="Описание">
+                    <Input @bind-Value="@context.Description" />
+                </FormItem>
+                <FormItem Label="Период в секундах">
+                    <Input @bind-Value="@context.PeriodSeconds" />
+                </FormItem>
+                <FormItem Label="Стоимость переиода">
+                    <Input @bind-Value="@context.PeriodPaymentAmount" />
+                </FormItem>
+
+                <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                    <Button Type="@ButtonType.Primary" HtmlType="submit">
+                        Submit
+                    </Button>
+                    <Button OnClick="Reset">
+                        Reset
+                    </Button>
+                </FormItem>
+            </Form>
+        </div>
+    </div>
+</Content>
+
+@code
+{
+    public class Model
+    {
+        [Required]
+        public string LimitMb { get; set; }
+        
+        [Required]
+        public string Title { get; set; }
+        
+        public string Description { get; set; }
+        
+        [Required]
+        public string PeriodSeconds { get; set; }
+        
+        [Required]
+        public string PeriodPaymentAmount { get; set; }
+    }
+
+    private Model model = new Model();
+    private Form<Model> form;
+
+    private InternetTariff internetTariff = new();
+
+    private void Reset(MouseEventArgs args)
+    {
+        form.Reset();
+    }
+
+    private void OnFinish(EditContext editContext)
+    {
+        var args = new AddTariffArgs
+        {
+            SpeedMb = int.Parse(model.LimitMb),
+            PeriodSeconds = int.Parse(model.PeriodSeconds),
+            PeriodPaymentAmount = int.Parse(model.PeriodPaymentAmount),
+            Title = model.Title,
+            Description = model.Description,
+        };
+        internetTariff.AddTariff(args);
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
+    }
 }
