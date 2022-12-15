@@ -1,4 +1,4 @@
-@namespace app.WebClient.Components.Info.NavbarComponent
+@namespace app.WebClient.Components.Info
 
 <Header>
     <div class="headerRow">
@@ -16,22 +16,24 @@
                         Главная страница
                     </div>
                 </MenuItem>
-                <MenuItem Key="cellular">
-                    <div class="menuitem">
-                        <div class="iconCont">
-                            <Icon Type="phone" Theme="outline"></Icon>
-                        </div>
-                        Сотовая связь
+            <MenuItem Key="cellular">
+                <div class="menuitem">
+                    <div class="iconCont">
+                        <Icon Type="phone" Theme="outline"></Icon>
                     </div>
-                </MenuItem>
-                <MenuItem Key="cable_internet">
-                    <div class="menuitem">
-                        <div class="iconCont">
-                            <Icon Type="global" Theme="outline"></Icon>
-                        </div>
-                        Кабельный интернет
+                    Сотовая связь
+                </div>
+            </MenuItem>
+            <MenuItem Key="cable_internet">
+                <a href="/cable-internet">
+                <div class="menuitem">
+                    <div class="iconCont">
+                        <Icon Type="global" Theme="outline"></Icon>
                     </div>
-                </MenuItem>
+                    Кабельный интернет
+                </div>
+                </a>
+            </MenuItem>
                 <MenuItem Key="internet_tv">
                     <div class="menuitem">
                         <div class="iconCont">
