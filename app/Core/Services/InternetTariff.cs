@@ -47,11 +47,15 @@ public class InternetTariff
             InitialPaymentAmount = 0,
             PeriodSeconds = args.PeriodSeconds,
             PeriodPaymentAmount = args.PeriodPaymentAmount,
-            ServiceType = JsonSerializer.Serialize(ServiceTypes.CabelInternet),
             Status = JsonSerializer.Serialize(TariffStatuses.Active),
         };
 
         dbContext.Add<Tariff>(tariff);
         dbContext.SaveChanges();
+    }
+
+    public Tariff[] GetTariffs()
+    {
+        return dbContext.Tariffs.Select((t) => t).ToList().ToArray();
     }
 }
