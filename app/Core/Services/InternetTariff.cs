@@ -24,6 +24,11 @@ public struct AddTariffArgs
     public int PeriodSeconds;
 }
 
+public struct TariffsFiltersArgs
+{
+    public int PeriodPaymentAmount;
+}
+
 public class InternetTariff
 {
     MasterContext dbContext = new ();
@@ -48,6 +53,7 @@ public class InternetTariff
             PeriodSeconds = args.PeriodSeconds,
             PeriodPaymentAmount = args.PeriodPaymentAmount,
             Status = JsonSerializer.Serialize(TariffStatuses.Active),
+            ServiceType = JsonSerializer.Serialize(ServiceTypes.CabelInternet),
         };
 
         dbContext.Add<Tariff>(tariff);
@@ -57,5 +63,13 @@ public class InternetTariff
     public Tariff[] GetTariffs()
     {
         return dbContext.Tariffs.Select((t) => t).ToList().ToArray();
+    }
+
+    public Tariff[] GetTariffsFilters(TariffsFiltersArgs args)
+    {
+        return dbContext.Tariffs
+            .Select((t) => t)
+            .Where((t) => t.PeriodPaymentAmount <= args.PeriodPaymentAmount)
+            .ToArray();
     }
 }

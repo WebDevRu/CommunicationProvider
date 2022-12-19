@@ -6,6 +6,7 @@
 @using app.WebClient.Pages
 @inject IJSRuntime JsRuntime;
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavManager
 
 <div class="cont">
     <Card 
@@ -56,6 +57,7 @@
         await localStorage.SetItemAsync("Id", _adminModel?.Id);
         await localStorage.SetItemAsync("Login", _adminModel?.Email);
         await localStorage.SetItemAsync("Password", _adminModel?.Password);
+        NavManager.NavigateTo("/admin");
     }
 
     private void OnFinish(EditContext editContext)

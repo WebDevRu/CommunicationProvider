@@ -1,11 +1,32 @@
 @using app.Core.Model
 @using app.Core.Services;
 @namespace app.WebClient.Components.Info
+@using System.ComponentModel.DataAnnotations;
 
 <Content>
     <div class="site-layout-content">
         <h1 class="heading">Список интернет тарифов:</h1>
-        <div class="list">
+        <div class="form">
+            <Form @ref="form"
+                  Model="@model"
+                  OnFinish="OnFinish"
+                  LabelColSpan="8"
+                  WrapperColSpan="16">
+                <FormItem Label="Максимальная стоимость периода">
+                    <Input @bind-Value="@context.PeriodPaymentAmount" />
+                </FormItem>
+        
+                <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                    <Button Type="@ButtonType.Primary" HtmlType="submit">
+                        Submit
+                    </Button>
+                    <Button OnClick="Reset">
+                        Reset
+                    </Button>
+                </FormItem>
+            </Form>
+        </div>
+            <div class="list">
             @foreach (var tarriff in Tarriffs)
             {
                 <Card Bordered Title=@(tarriff.Title) Style="width: 300px; overflow: hidden"> 
@@ -13,7 +34,6 @@
                         <Statistic Title="Описание" Value=@(tarriff.Description) />
                         <Statistic Title="Длинна периода в часаx" Value=@(tarriff.PeriodSeconds / 3600) />
                         <Statistic Title="Стоимость периода в руб." Value=@(tarriff.PeriodPaymentAmount) />
-                    
                     </Body>
                 </Card>
             }
@@ -26,6 +46,32 @@
     
     private InternetTariff TariffRepository = new ();
     
+    public class Model
+    {
+        [Required]
+        public string PeriodPaymentAmount { get; set; }
+    }
+
+    private Model model = new Model();
+    private Form<Model> form;
+
+    private InternetTariff internetTariff = new();
+
+    private void Reset(MouseEventArgs args)
+    {
+        form.Reset();
+    }
+
+    private void OnFinish(EditContext editContext)
+    {
+        var args = new TariffsFiltersArgs
+        {
+            PeriodPaymentAmount = int.Parse(model.PeriodPaymentAmount),
+        };
+
+        Tarriffs = TariffRepository.GetTariffsFilters(args);
+    }
+
     protected override void OnInitialized()
     {
         Tarriffs = TariffRepository.GetTariffs();
