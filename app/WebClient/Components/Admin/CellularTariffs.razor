@@ -1,12 +1,132 @@
 @namespace app.WebClient.Components.Admin
 
+@using System.ComponentModel.DataAnnotations;
+@using app.Core.Services;
+@using app.Core.Model
+@using System.Text.Json;
+@inject NotificationService _notice
+
 <Content>
     <div class="site-layout-content">
         <h1>Добавление тарифа сотовой связи:</h1>
         <div class="spacer"/>
+        
+         <div class="form">
+             <Form @ref="form"
+                   Model="@model"
+                   OnFinish="OnFinish"
+                   OnFinishFailed="OnFinishFailed"
+                   LabelColSpan="8"
+                   WrapperColSpan="16">
+                 <FormItem Label="Название">
+                     <Input @bind-Value="@context.Title" />
+                 </FormItem>
+                 <FormItem Label="Описание">
+                     <Input @bind-Value="@context.Description" />
+                 </FormItem>
+                 <FormItem Label="Период в секундах">
+                      <Input @bind-Value="@context.PeriodSeconds" />
+                 </FormItem>
+                 <FormItem Label="Стоимость периода">
+                       <Input @bind-Value="@context.PeriodPaymentAmount" />
+                 </FormItem>
+                 <FormItem Label="Размер пакет в ГБ">
+                      <Input @bind-Value="@context.MobileInternetLimitMb" />
+                 </FormItem>
+                 <FormItem Label="Количество минут связи:">
+                     <Input @bind-Value="@context.MobileCallsMinutes" />
+                 </FormItem>
+                 <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                     <Button Type="@ButtonType.Primary" HtmlType="submit">
+                         Создать
+                     </Button>
+                     <Button OnClick="Reset">
+                         Отменить
+                     </Button>
+                 </FormItem>
+             </Form>
+       </div>
     </div>
 </Content>
 
 @code {
+    public class Model
+    {
+        [Required]
+        public string Title { get; set; }
+        
+        public string Description { get; set; }
+        
+        [Required]
+        public string PeriodSeconds { get; set; }
+        
+        [Required]
+        public string PeriodPaymentAmount { get; set; }
+        
+        [Required]
+        public string MobileInternetLimitMb  { get; set; }
+        
+        [Required]
+        public string MobileCallsMinutes { get; set; }
+    }
+
+    private Model model = new Model();
+    private Form<Model> form;
+
+    private CellularTariff cellularTariff = new();
+
+    private void Reset(MouseEventArgs args)
+    {
+        form.Reset();
+    }
+
+    private void OnFinish(EditContext editContext)
+    {
+        var args = new CreateCellularTariffArgs
+        {
+            PeriodSeconds = int.Parse(model.PeriodSeconds),
+            PeriodPaymentAmount = int.Parse(model.PeriodPaymentAmount),
+            Title = model.Title,
+            Description = model.Description,
+            MobileInternetLimitMb = int.Parse(model.MobileInternetLimitMb) * 1014,
+            MobileCallsMinutes = int.Parse(model.MobileCallsMinutes),
+        };
+
+        try
+        {
+            cellularTariff.CreateCellularTariff(args);
+            ShowSuccessNotification(model.Title);
+            form.Reset();
+        }
+        catch (Exception)
+        {
+            ShowErrorNotification();
+        }
+    }
     
+    private async void ShowSuccessNotification (string title)
+    {
+          
+        string key = $"open{DateTime.Now}";
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = "Тариф успешно добавлен",
+            Key = key,
+            Description = title,
+        });
+    }
+
+    private void ShowErrorNotification()
+    {
+        _=_notice.Error(new()
+        {
+            Message = "Произошла ошибка",
+            Description = "Повторите позднее"
+        });
+    }
+ 
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ShowErrorNotification();
+    }
 }
