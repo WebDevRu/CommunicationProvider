@@ -67,15 +67,62 @@
                                 Удалить
                             </Button>
                         </Popconfirm>
-                        <Button Type="@ButtonType.Primary">
+                        <Button Type="@ButtonType.Primary" OnClick="@(() => OpenEditModal(
+                                                                        tarriff.Id,
+                                                                        tarriff.Title,
+                                                                        tarriff.Description,
+                                                                        tarriff.PeriodSeconds,
+                                                                        tarriff.PeriodPaymentAmount
+                                                                        ))">
                             Редактировать
                         </Button>
                     </div>
                     </Body>
                 </Card>
             }
-         </div>
+        </div>
     </div>
+    <Modal Title="Редактировать"
+           Visible="@_visible"
+           OnOk="@HandleOk"
+           OnCancel="@HandleCancel"
+           >
+        <div class="form">
+                    <Form @ref="editForm"
+                          Model="@editModel"
+                          OnFinish="OnFinishEdit"
+                          OnFinishFailed="OnFinishFailed"
+                          LabelColSpan="8"
+                          WrapperColSpan="16">
+                        <FormItem Label="Название">
+                            <Input @bind-Value="@context.Title" />
+                        </FormItem>
+                        <FormItem Label="Описание">
+                            <Input @bind-Value="@context.Description" />
+                        </FormItem>
+                        <FormItem Label="Период в секундах">
+                            <Input @bind-Value="@context.PeriodSeconds" />
+                        </FormItem>
+                        <FormItem Label="Стоимость периода">
+                            <Input @bind-Value="@context.PeriodPaymentAmount" />
+                        </FormItem>
+                        <FormItem Label="Размер пакет в ГБ">
+                            <Input @bind-Value="@context.MobileInternetLimitMb" />
+                        </FormItem>
+                        <FormItem Label="Количество минут связи:">
+                            <Input @bind-Value="@context.MobileCallsMinutes" />
+                        </FormItem>
+                        <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                                редактировать
+                            </Button>
+                            <Button OnClick="ResetEdit">
+                                Отменить
+                            </Button>
+                        </FormItem>
+                    </Form>
+                </div>
+    </Modal>
 </Content>
 
 @code {
@@ -98,10 +145,38 @@
         [Required]
         public string MobileCallsMinutes { get; set; }
     }
+    
+    public class EditModel
+    {
+        [Required]
+        public string Title { get; set; }
+        
+        public string Description { get; set; }
+        
+        [Required]
+        public string PeriodSeconds { get; set; }
+        
+        [Required]
+        public string PeriodPaymentAmount { get; set; }
+        
+        [Required]
+        public string MobileInternetLimitMb  { get; set; }
+        
+        [Required]
+        public string MobileCallsMinutes { get; set; }
+    }
 
     private Model model = new Model();
     
+    private Model editModel = new Model();
+
+    private int editTariffId = 0; 
+    
+    bool _visible = false;
+    
     private Form<Model> form;
+    
+    private Form<Model> editForm;
 
     private CellularTariff cellularTariff = new();
     
@@ -110,6 +185,11 @@
     private void Reset(MouseEventArgs args)
     {
         form.Reset();
+    }
+
+    private void ResetEdit(MouseEventArgs args)
+    {
+        editForm.Reset();
     }
 
     private void OnFinish(EditContext editContext)
@@ -148,6 +228,18 @@
             Description = title,
         });
     }
+    
+    private async void ShowEditSuccessNotification (string title)
+    {
+          
+        string key = $"open{DateTime.Now}";
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = "Тариф успешно отредактирован",
+            Key = key,
+            Description = title,
+        });
+    }
 
     private void ShowErrorNotification()
     {
@@ -172,5 +264,52 @@
     protected override void OnInitialized()
     {
         Tarriffs = cellularTariff.GetTariffs();
+    }
+    
+    private void HandleOk(MouseEventArgs e)
+    {
+        _visible = false;
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        _visible = false;
+    }
+
+    private void OpenEditModal(int tariffId, string title, string desc, int periodSeconds, int paymentAmount)
+    {
+        _visible = true;
+        editModel.Title = title;
+        editModel.Description = desc;
+        editModel.PeriodSeconds = periodSeconds.ToString();
+        editModel.PeriodPaymentAmount = paymentAmount.ToString();
+        editTariffId = tariffId;
+    }
+    
+    private void OnFinishEdit(EditContext editContext)
+    {
+        var args = new EditCellularTariffArgs
+        {
+            TariffId = editTariffId,
+            PeriodSeconds = int.Parse(editModel.PeriodSeconds),
+            PeriodPaymentAmount = int.Parse(editModel.PeriodPaymentAmount),
+            Title = editModel.Title,
+            Description = editModel.Description,
+            MobileInternetLimitMb = int.Parse(editModel.MobileInternetLimitMb) * 1014,
+            MobileCallsMinutes = int.Parse(editModel.MobileCallsMinutes),
+        };
+
+        try
+        {
+            cellularTariff.EditCellularTariff(args);
+            ShowEditSuccessNotification(editModel.Title);
+            form.Reset();
+            Tarriffs = cellularTariff.GetTariffs();
+            _visible = false;
+        }
+        catch (Exception)
+        {
+            ShowErrorNotification();
+        }
     }
 }

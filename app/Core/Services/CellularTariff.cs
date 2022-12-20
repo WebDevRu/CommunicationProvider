@@ -11,6 +11,17 @@ public struct CreateCellularTariffArgs
     public int MobileInternetLimitMb;
     public int MobileCallsMinutes;
 }
+
+public struct EditCellularTariffArgs
+{
+    public int TariffId;
+    public string Title;
+    public string Description;
+    public int PeriodPaymentAmount;
+    public int PeriodSeconds;
+    public int MobileInternetLimitMb;
+    public int MobileCallsMinutes;
+}
 public class CellularTariff
 {
     MasterContext dbContext = new ();
@@ -41,6 +52,18 @@ public class CellularTariff
         };
 
         dbContext.Add<Tariff>(tariff);
+        dbContext.SaveChanges();
+    }
+
+    public void EditCellularTariff(EditCellularTariffArgs args)
+    {
+        Tariff? tariff = dbContext.Tariffs.First(x => x.Id == args.TariffId);
+
+        tariff.Title = args.Title;
+        tariff.Description = args.Description;
+        tariff.PeriodPaymentAmount = args.PeriodPaymentAmount;
+        tariff.PeriodSeconds = args.PeriodSeconds;
+
         dbContext.SaveChanges();
     }
     
