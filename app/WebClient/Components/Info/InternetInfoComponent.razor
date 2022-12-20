@@ -18,15 +18,15 @@
         
                 <FormItem WrapperColOffset="8" WrapperColSpan="16">
                     <Button Type="@ButtonType.Primary" HtmlType="submit">
-                        Submit
+                        Отфильтровать
                     </Button>
                     <Button OnClick="Reset">
-                        Reset
+                        Сбросить
                     </Button>
                 </FormItem>
             </Form>
         </div>
-            <div class="list">
+        <div class="list">
             @foreach (var tarriff in Tarriffs)
             {
                 <Card Bordered Title=@(tarriff.Title) Style="width: 300px; overflow: hidden"> 

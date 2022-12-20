@@ -40,4 +40,21 @@ public class CableTVTariff
         dbContext.Add<Tariff>(tariff);
         dbContext.SaveChanges();
     }
+    
+    public Tariff[] GetTariffs()
+    {
+        return dbContext.Tariffs
+            .Select((t) => t)
+            .Where((t) => t.ServiceType == "0")
+            .ToArray();
+    }
+    
+    public Tariff[] GetTariffsFilters(TariffsFiltersArgs args)
+    {
+        return dbContext.Tariffs
+            .Select((t) => t)
+            .Where((t) => t.ServiceType == "0")
+            .Where((t) => t.PeriodPaymentAmount <= args.PeriodPaymentAmount)
+            .ToArray();
+    }
 }

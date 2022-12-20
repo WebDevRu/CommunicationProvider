@@ -62,13 +62,17 @@ public class InternetTariff
 
     public Tariff[] GetTariffs()
     {
-        return dbContext.Tariffs.Select((t) => t).ToList().ToArray();
+        return dbContext.Tariffs
+            .Select((t) => t)
+            .Where((t) => t.ServiceType == "1")
+            .ToArray();
     }
 
     public Tariff[] GetTariffsFilters(TariffsFiltersArgs args)
     {
         return dbContext.Tariffs
             .Select((t) => t)
+            .Where((t) => t.ServiceType == "1")
             .Where((t) => t.PeriodPaymentAmount <= args.PeriodPaymentAmount)
             .ToArray();
     }
