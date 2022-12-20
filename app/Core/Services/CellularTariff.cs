@@ -37,7 +37,7 @@ public class CellularTariff
             PeriodSeconds = args.PeriodSeconds,
             PeriodPaymentAmount = args.PeriodPaymentAmount,
             Status = JsonSerializer.Serialize(TariffStatuses.Active),
-            ServiceType = JsonSerializer.Serialize(ServiceTypes.InternetTV),
+            ServiceType = JsonSerializer.Serialize(ServiceTypes.Cellular),
         };
 
         dbContext.Add<Tariff>(tariff);
@@ -50,6 +50,16 @@ public class CellularTariff
             .Select((t) => t)
             .Where((t) => t.ServiceType == "2")
             .ToArray();
+    }
+
+    public void DeleteTariff(int tariffId)
+    {
+        Tariff? tariff = dbContext.Tariffs.First(x => x.Id == tariffId);
+        if (tariff != null)
+        {
+            dbContext.Tariffs.Remove(tariff);
+            dbContext.SaveChanges();
+        }
     }
     
     public Tariff[] GetTariffsFilters(TariffsFiltersArgs args)

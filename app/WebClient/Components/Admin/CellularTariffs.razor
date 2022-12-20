@@ -11,41 +11,70 @@
         <h1>Добавление тарифа сотовой связи:</h1>
         <div class="spacer"/>
         
-         <div class="form">
-             <Form @ref="form"
-                   Model="@model"
-                   OnFinish="OnFinish"
-                   OnFinishFailed="OnFinishFailed"
-                   LabelColSpan="8"
-                   WrapperColSpan="16">
-                 <FormItem Label="Название">
-                     <Input @bind-Value="@context.Title" />
-                 </FormItem>
-                 <FormItem Label="Описание">
-                     <Input @bind-Value="@context.Description" />
-                 </FormItem>
-                 <FormItem Label="Период в секундах">
-                      <Input @bind-Value="@context.PeriodSeconds" />
-                 </FormItem>
-                 <FormItem Label="Стоимость периода">
-                       <Input @bind-Value="@context.PeriodPaymentAmount" />
-                 </FormItem>
-                 <FormItem Label="Размер пакет в ГБ">
-                      <Input @bind-Value="@context.MobileInternetLimitMb" />
-                 </FormItem>
-                 <FormItem Label="Количество минут связи:">
-                     <Input @bind-Value="@context.MobileCallsMinutes" />
-                 </FormItem>
-                 <FormItem WrapperColOffset="8" WrapperColSpan="16">
-                     <Button Type="@ButtonType.Primary" HtmlType="submit">
-                         Создать
-                     </Button>
-                     <Button OnClick="Reset">
-                         Отменить
-                     </Button>
-                 </FormItem>
-             </Form>
-       </div>
+        <div class="form">
+            <Form @ref="form"
+                  Model="@model"
+                  OnFinish="OnFinish"
+                  OnFinishFailed="OnFinishFailed"
+                  LabelColSpan="8"
+                  WrapperColSpan="16">
+                <FormItem Label="Название">
+                    <Input @bind-Value="@context.Title" />
+                </FormItem>
+                <FormItem Label="Описание">
+                    <Input @bind-Value="@context.Description" />
+                </FormItem>
+                <FormItem Label="Период в секундах">
+                    <Input @bind-Value="@context.PeriodSeconds" />
+                </FormItem>
+                <FormItem Label="Стоимость периода">
+                    <Input @bind-Value="@context.PeriodPaymentAmount" />
+                </FormItem>
+                <FormItem Label="Размер пакет в ГБ">
+                    <Input @bind-Value="@context.MobileInternetLimitMb" />
+                </FormItem>
+                <FormItem Label="Количество минут связи:">
+                    <Input @bind-Value="@context.MobileCallsMinutes" />
+                </FormItem>
+                <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                    <Button Type="@ButtonType.Primary" HtmlType="submit">
+                        Создать
+                    </Button>
+                    <Button OnClick="Reset">
+                        Отменить
+                    </Button>
+                </FormItem>
+            </Form>
+        </div>
+        <div class="spacer"/>
+        <h3>Список тарифов:</h3>
+        <div class="list">
+            @foreach (var tarriff in Tarriffs)
+            {
+                <Card Bordered Title=@(tarriff.Title) Style="width: 300px; overflow: hidden"> 
+                    <Body>
+                    <Statistic Title="Описание" Value=@(tarriff.Description) />
+                    <Statistic Title="Длина периода в часаx" Value=@(tarriff.PeriodSeconds / 3600) />
+                    <Statistic Title="Стоимость периода в руб." Value=@(tarriff.PeriodPaymentAmount) />
+                    <div class="actionsRows">
+                        <Popconfirm 
+                            Title="Вы точно уверены?"
+                            OkText="Да" 
+                            CancelText="Нет"
+                            OnConfirm="() => ConfirmDeletion(tarriff.Id)"
+                        >
+                            <Button Danger Type="@ButtonType.Primary">
+                                Удалить
+                            </Button>
+                        </Popconfirm>
+                        <Button Type="@ButtonType.Primary">
+                            Редактировать
+                        </Button>
+                    </div>
+                    </Body>
+                </Card>
+            }
+         </div>
     </div>
 </Content>
 
@@ -71,9 +100,12 @@
     }
 
     private Model model = new Model();
+    
     private Form<Model> form;
 
     private CellularTariff cellularTariff = new();
+    
+    public Tariff[] Tarriffs;
 
     private void Reset(MouseEventArgs args)
     {
@@ -97,6 +129,7 @@
             cellularTariff.CreateCellularTariff(args);
             ShowSuccessNotification(model.Title);
             form.Reset();
+            Tarriffs = cellularTariff.GetTariffs();
         }
         catch (Exception)
         {
@@ -128,5 +161,16 @@
     private void OnFinishFailed(EditContext editContext)
     {
         ShowErrorNotification();
+    }
+    
+    private void ConfirmDeletion(int tariffId)
+    {
+        cellularTariff.DeleteTariff(tariffId);
+        Tarriffs = cellularTariff.GetTariffs();
+    }
+    
+    protected override void OnInitialized()
+    {
+        Tarriffs = cellularTariff.GetTariffs();
     }
 }
