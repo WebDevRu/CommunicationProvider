@@ -44,7 +44,7 @@
 @code {
     public Tariff[] Tarriffs;
     
-    private CableTVTariff CableTVRepository = new ();
+    private CellularTariff cellularTariff = new ();
     
     public class Model
     {
@@ -68,11 +68,13 @@
             PeriodPaymentAmount = int.Parse(model.PeriodPaymentAmount),
         };
 
-        Tarriffs = CableTVRepository.GetTariffsFilters(args);
+        Tarriffs = cellularTariff.GetTariffsFilters(args);
     }
 
     protected override void OnInitialized()
     {
-        Tarriffs = CableTVRepository.GetTariffs();
+        Tarriffs = cellularTariff.GetTariffs();
+        
+        Console.WriteLine(Tarriffs[0].Limit);
     }
 }

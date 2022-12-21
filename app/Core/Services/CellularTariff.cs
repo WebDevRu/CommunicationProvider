@@ -66,7 +66,7 @@ public class CellularTariff
 
         dbContext.SaveChanges();
     }
-    
+
     public Tariff[] GetTariffs()
     {
         return dbContext.Tariffs

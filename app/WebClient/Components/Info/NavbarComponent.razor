@@ -1,4 +1,6 @@
 @namespace app.WebClient.Components.Info
+@using Microsoft.AspNetCore.Components;
+@using AntDesign.Core.Helpers.MemberPath
 
 <Header>
     <div class="headerRow">
@@ -7,7 +9,7 @@
                 Связь
             </Text>
         </div>
-        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new[] { "2" })>
+        <Menu SelectedKeys=@(new[] { @_activeItem }) Theme="MenuTheme.Dark" Mode="MenuMode.Horizontal" DefaultSelectedKeys=@(new[] { "2" })>
             <MenuItem Key="main_page">
                 <a href="/">
                     <div class="menuitem">
@@ -62,3 +64,30 @@
         color:  white;
     }
 </style>
+
+@code {
+    [Inject]
+    public NavigationManager MyNavigationManager {get; set;} = default!;
+
+    private string _activeItem = "main_page";
+
+    protected override void OnInitialized()
+    {
+        var Uri = MyNavigationManager.Uri;
+
+        if (Uri == MyNavigationManager.BaseUri)
+        {
+            _activeItem = "main_page";
+        } else if (Uri == MyNavigationManager.BaseUri + "cellular-info")
+        { 
+            _activeItem = "cellular";
+        } else if (Uri == MyNavigationManager.BaseUri + "cable-internet")
+        {
+            _activeItem = "cable_internet";
+        }
+        else
+        {
+            _activeItem = "internet_tv";
+        }
+    }
+}

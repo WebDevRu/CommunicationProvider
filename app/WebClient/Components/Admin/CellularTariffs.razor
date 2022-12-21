@@ -67,13 +67,14 @@
                                 Удалить
                             </Button>
                         </Popconfirm>
-                        <Button Type="@ButtonType.Primary" OnClick="@(() => OpenEditModal(
-                                                                        tarriff.Id,
-                                                                        tarriff.Title,
-                                                                        tarriff.Description,
-                                                                        tarriff.PeriodSeconds,
-                                                                        tarriff.PeriodPaymentAmount
-                                                                        ))">
+                        <Button Type="@ButtonType.Primary" OnClick="@(
+    () => OpenEditModal(
+        tarriff.Id,
+        tarriff.Title,
+        tarriff.Description,
+        tarriff.PeriodSeconds,
+        tarriff.PeriodPaymentAmount
+        ))">
                             Редактировать
                         </Button>
                     </div>
