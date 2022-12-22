@@ -73,14 +73,14 @@ else
         {
             if (userType == "admin")
             {
-                adminAuth.PostLogin(args);
+                var admin = adminAuth.PostLogin(args);
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var user = authState.User;
         
                 if (user.Identity.IsAuthenticated)
                 {
                     authUserType = "admin";
-                    AppState.InitApp(UserTypes.Admin);
+                    AppState.InitApp(UserTypes.Admin, admin.Email);
                     StateHasChanged();
                 }
                 else
@@ -91,14 +91,14 @@ else
 
             if (userType == "subscriber")
             {
-                subscriberAuth.PostLogin(args);
+                var subscriber = subscriberAuth.PostLogin(args);
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 var user = authState.User;
         
                 if (user.Identity.IsAuthenticated)
                 {
                     authUserType = "subscriber";
-                    AppState.InitApp(UserTypes.Abonent);
+                    AppState.InitApp(UserTypes.Abonent, subscriber.Email);
                     StateHasChanged();
                 }
                 else
@@ -120,8 +120,8 @@ else
         message = $"Initialized at {DateTime.Now}";
         var Uri = MyNavigationManager.Uri;
         if (
-            Uri == MyNavigationManager.BaseUri + "/subscriber/profile" ||
-            Uri == MyNavigationManager.BaseUri + "/subscriber/history"
+            Uri == MyNavigationManager.BaseUri + "subscriber/profile" ||
+            Uri == MyNavigationManager.BaseUri + "subscriber/history"
             )
         {
             isSubscriberInternalPage = true;

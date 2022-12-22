@@ -1,6 +1,8 @@
 @namespace app.WebClient.Components.Info
 @using Microsoft.AspNetCore.Components;
-@using AntDesign.Core.Helpers.MemberPath
+@using AntDesign.Core.Helpers.MemberPath;
+@using app.WebClient.State;
+@inject ApplicationState AppState;
 
 <Header>
     <div class="headerRow">
@@ -32,12 +34,12 @@
             </MenuItem>
             <MenuItem Key="cable_internet">
                 <a href="/cable-internet">
-                <div class="menuitem">
-                    <div class="iconCont">
-                        <Icon Type="global" Theme="outline"></Icon>
+                    <div class="menuitem">
+                        <div class="iconCont">
+                            <Icon Type="global" Theme="outline"></Icon>
+                        </div>
+                        Кабельный интернет
                     </div>
-                    Кабельный интернет
-                </div>
                 </a>
             </MenuItem>
             <MenuItem Key="internet_tv">
@@ -50,12 +52,23 @@
                     </div>
                 </a>
             </MenuItem>
-            </Menu>
+        </Menu>
+        @if (AppState.UserType == UserTypes.Abonent)
+        {
+            <a href="/subscriber/profile">
+                <Button Type="@ButtonType.Primary">
+                    Личный кабинет
+                </Button>
+            </a>
+        }
+        else
+        {
             <a href="/login">
                 <Button Type="@ButtonType.Primary">
                     Войти
                 </Button>
-            </a>
+            </a>   
+        }
     </div>
 </Header>
 

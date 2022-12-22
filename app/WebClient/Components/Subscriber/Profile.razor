@@ -1,7 +1,150 @@
 @namespace app.WebClient.Components.Subscriber
 
-<h3>Profile</h3>
+@using System.ComponentModel.DataAnnotations;
+@using app.Core.Services;
+@using app.Core.Model
+@using System.Text.Json;
+@inject NotificationService _notice
+@inject State.ApplicationState AppState;
+
+<Content>
+    <div class="site-layout-content">
+        <h1>Профиль абонента</h1>
+        <div class="spacer"/>
+        
+        <div class="form">
+                    <Form @ref="form"
+                          Model="@model"
+                          OnFinish="OnFinish"
+                          OnFinishFailed="OnFinishFailed"
+                          LabelColSpan="8"
+                          WrapperColSpan="16">
+                        <FormItem Label="Почта">
+                            <Input @bind-Value="@context.Email" />
+                        </FormItem>
+                        <FormItem Label="Пароль">
+                            <InputPassword @bind-Value="@context.Password" />
+                        </FormItem>
+                        <FormItem Label="Имя">
+                            <Input @bind-Value="@context.FirstName" />
+                        </FormItem>
+                        <FormItem Label="Фамилия">
+                            <Input @bind-Value="@context.LastName" />
+                        </FormItem>
+                        <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                                Сохранить
+                            </Button>
+                            <Button OnClick="Reset">
+                                Отменить
+                            </Button>
+                        </FormItem>
+                    </Form>
+                </div>
+    </div>
+</Content>
 
 @code {
+    public class Model
+    {
+        [Required]
+        public string Email { get; set; }
+        
+        [Required]
+        public string Password { get; set; }
+        
+        [Required]
+        public string FirstName { get; set; }
+        
+        [Required]
+        public string LastName { get; set; }
+    }
     
+    private Form<Model> form;
+    
+    private Model model = new Model();
+    
+    private SubscriberService _subscriberService = new();
+    
+    private void Reset(MouseEventArgs args)
+    {
+        form.Reset();
+    }
+    
+    private void OnFinish(EditContext editContext)
+    {
+        var args = new AddSubscriberArgs
+        {
+            Email = model.Email,
+
+            Password = model.Password,
+    
+            FirstName = model.FirstName,
+
+            LastName = model.LastName,
+        };
+
+        try
+        {
+            ShowSuccessNotification(model.FirstName);
+            var editArgs = new EditSubscriberArgs
+            {
+                Email = model.Email,
+
+                Password = model.Password,
+
+                FirstName = model.FirstName,
+
+                LastName = model.LastName,
+            };
+            
+            _subscriberService.EditSubscriber(editArgs);
+            form.Reset();
+        }
+        catch (Exception)
+        {
+            ShowErrorNotification();
+        }
+    }
+    
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ShowErrorNotification();
+    }
+    
+    private async void ShowSuccessNotification (string title)
+    {
+          
+        string key = $"open{DateTime.Now}";
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = "Профиль успешно обновлён",
+            Key = key,
+            Description = title,
+        });
+    }
+    
+    private void ShowErrorNotification()
+    {
+        _=_notice.Error(new()
+        {
+            Message = "Произошла ошибка",
+            Description = "Повторите позднее"
+        });
+    }
+    
+    protected override void OnInitialized()
+    {
+        var args = new GetSubscriberArgs
+        {
+            Email = AppState.Email,
+        };
+        
+        var subscriber = _subscriberService.GetSubscriber(args);
+        
+        model.Email = subscriber.Email;
+        model.Password = subscriber.Password;
+        model.FirstName = subscriber.FirstName;
+        model.LastName = subscriber.LastName;
+    }
 }

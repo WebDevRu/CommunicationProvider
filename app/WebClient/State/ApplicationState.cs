@@ -13,12 +13,15 @@ public class ApplicationState
     
     public bool IsInit { get; set; }
     
+    public string Email { get; set; }
+    
     public UserTypes UserType { get; set; }
 
-    public void InitApp(UserTypes uType)
+    public void InitApp(UserTypes uType, string email)
     {
         UserType = uType;
         IsInit = true;
+        Email = email;
     }
 
     public ApplicationState()
