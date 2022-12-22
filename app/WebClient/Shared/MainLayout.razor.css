@@ -13,6 +13,13 @@
     flex-shrink: 0;
 }
 
+.sidebar-subscriber {
+    background: white;
+    min-height: 100vh;
+    height: 100%;
+    flex-shrink: 0;
+}
+
 .adminMain {
     flex-shrink: 1;
     width: 100%;

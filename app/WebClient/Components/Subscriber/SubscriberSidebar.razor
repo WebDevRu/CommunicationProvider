@@ -1,0 +1,41 @@
+@namespace app.WebClient.Components.Subscriber
+@inject IconService iconService
+
+<div style="width: 256px;">
+    <Menu Theme="MenuTheme.Light"
+          Mode=MenuMode.Inline
+          InlineCollapsed=collapsed>
+        <a href="/subscriber/profile">
+            <MenuItem Key="0">
+                <IconTemplate>
+                    <Icon Type="user" Theme="outline"></Icon>
+                </IconTemplate>
+                <ChildContent>
+                    <span>Профиль абонента</span>
+                </ChildContent>
+            </MenuItem>
+        </a>
+        <a href="/subscriber/history">
+            <MenuItem Key="1">
+                <IconTemplate>
+                    <Icon Type="ordered-list" Theme="outline"></Icon>
+                </IconTemplate>
+                <ChildContent>
+                    <span>История покупок</span>
+                </ChildContent>
+            </MenuItem>
+        </a>
+    </Menu>
+</div>
+
+@code {
+    bool collapsed = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await iconService.CreateFromIconfontCN("//at.alicdn.com/t/font_2735473_hi62ezq5579.js");
+        }
+    }
+}

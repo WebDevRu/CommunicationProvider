@@ -1,6 +1,13 @@
 @namespace app.WebClient.Components.Auth.LoginComponent
+
 @using System.ComponentModel.DataAnnotations;
+@using app.Core.Services;
 @using System.Text.Json;
+@using app.Core.Model
+@using app.WebClient.Pages
+@inject IJSRuntime JsRuntime;
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavManager
 
 <div class="cont">
     <Card 
@@ -40,12 +47,35 @@
     }
 
     private Model model = new Model();
+    
+    private Abonent _subscriberModel = new ();
+    
+    private SubscriberAuth _subscriberAuth = new ();
+
+    protected async Task WriteAuthCookies()
+    {
+        await localStorage.SetItemAsync("UserType", "subscriber");
+        await localStorage.SetItemAsync("Id", _subscriberModel?.Id);
+        await localStorage.SetItemAsync("Login", _subscriberModel?.Email);
+        await localStorage.SetItemAsync("Password", _subscriberModel?.Password);
+        NavManager.NavigateTo("/subscriber/history");
+    }
 
     private void OnFinish(EditContext editContext)
     {
-        Console.WriteLine($"Success:{JsonSerializer.Serialize(model)}");
-    }
+        var args = new LoginArgs { Login = model.Username, Password = model.Password };
 
+        try
+        {
+            _subscriberModel = _subscriberAuth.PostLogin(args);
+            WriteAuthCookies();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+    
     private void OnFinishFailed(EditContext editContext)
     {
         Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");

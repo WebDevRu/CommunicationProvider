@@ -4,16 +4,29 @@
 @using app.Core.Services;
 @using app.WebClient.State
 @using app.WebClient.Components.Admin
+@using app.WebClient.Components.Subscriber
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject State.ApplicationState AppState;
 
 <PageTitle>app</PageTitle>
 
-@if (isAuthed)
+@if (authUserType == "admin")
 {
     <div class="adminPage">
         <div class="sidebar">
             <SideBar />
+        </div>
+        <main class="adminMain">
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
+}
+else if (authUserType == "subscriber" && isSubscriberInternalPage) {
+    <div class="adminPage">
+        <div class="sidebar-subscriber">
+            <SubscriberSidebar />
         </div>
         <main class="adminMain">
             <article class="content px-4">
@@ -39,37 +52,62 @@ else
     private string authMessage;
     private string surnameMessage;
     private AdminAuth adminAuth = new ();
+    private SubscriberAuth subscriberAuth = new ();
     private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+    
+    [Inject]
+    public NavigationManager MyNavigationManager {get; set;} = default!;
 
-    private bool isAuthed = false;
+    private string authUserType = "guest";
+
+    private bool isSubscriberInternalPage = false;
     
     private async Task GetClaimsPrincipalData()
     {
         var login = await localStorage.GetItemAsync<string>("Login");
         var password = await localStorage.GetItemAsync<string>("Password");
+        var userType = await localStorage.GetItemAsync<string>("UserType");
         var args = new LoginArgs { Login = login, Password = password };
         
         try
         {
-            var admin = adminAuth.PostLogin(args);
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
+            if (userType == "admin")
+            {
+                adminAuth.PostLogin(args);
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
         
-            if (user.Identity.IsAuthenticated)
-            {
-                authMessage = $"{user.Identity.Name} is authenticated.";
-                claims = user.Claims;
-                surnameMessage =
-                    $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
-                
-                isAuthed = true;
-                AppState.InitApp(UserTypes.Admin);
-                StateHasChanged();
+                if (user.Identity.IsAuthenticated)
+                {
+                    authUserType = "admin";
+                    AppState.InitApp(UserTypes.Admin);
+                    StateHasChanged();
+                }
+                else
+                {
+                    authMessage = "The user is NOT authenticated.";
+                }   
             }
-            else
+
+            if (userType == "subscriber")
             {
-                authMessage = "The user is NOT authenticated.";
+                subscriberAuth.PostLogin(args);
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+        
+                if (user.Identity.IsAuthenticated)
+                {
+                    authUserType = "subscriber";
+                    AppState.InitApp(UserTypes.Abonent);
+                    StateHasChanged();
+                }
+                else
+                {
+                    authMessage = "The user is NOT authenticated.";
+                }
             }
+            
+            Console.WriteLine(authUserType, userType);
         }
         catch (Exception e)
         {
@@ -80,6 +118,14 @@ else
     protected override void OnInitialized()
     {
         message = $"Initialized at {DateTime.Now}";
+        var Uri = MyNavigationManager.Uri;
+        if (
+            Uri == MyNavigationManager.BaseUri + "/subscriber/profile" ||
+            Uri == MyNavigationManager.BaseUri + "/subscriber/history"
+            )
+        {
+            isSubscriberInternalPage = true;
+        }
         GetClaimsPrincipalData();
     }
 }
