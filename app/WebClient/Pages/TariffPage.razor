@@ -1,0 +1,9 @@
+@page "/tariff/{tariffId:int}"
+@using app.WebClient.Components.Info
+
+<TariffComponent tariffId="@tariffId" />
+
+@code {
+    [Parameter]
+    public int tariffId { get; set; }
+}

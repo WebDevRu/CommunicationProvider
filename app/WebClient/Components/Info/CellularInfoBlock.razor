@@ -29,13 +29,15 @@
         <div class="list">
             @foreach (var tarriff in Tarriffs)
             {
-                <Card Bordered Title=@(tarriff.Title) Style="width: 300px; overflow: hidden">
-                    <Body>
+                <a href="tariff/@(tarriff.Id)">
+                    <Card Bordered Title=@(tarriff.Title) Style="width: 300px; overflow: hidden">
+                        <Body>
                         <Statistic Title="Описание" Value=@(tarriff.Description)/>
                         <Statistic Title="Длина периода в часаx" Value=@(tarriff.PeriodSeconds / 3600)/>
                         <Statistic Title="Стоимость периода в руб." Value=@(tarriff.PeriodPaymentAmount)/>
-                    </Body>
-                </Card>
+                        </Body>
+                    </Card>
+                </a>
             }
         </div>
     </div>
@@ -63,6 +65,7 @@
 
     private void OnFinish(EditContext editContext)
     {
+        var s = $$"""/tariff/{{{model.PeriodPaymentAmount}}}""";
         var args = new TariffsFiltersArgs
         {
             PeriodPaymentAmount = int.Parse(model.PeriodPaymentAmount),

@@ -1,0 +1,11 @@
+.content {
+    background: white;
+    margin: 25px;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+.heading {
+    margin-top: 20px;
+    display: block;
+}

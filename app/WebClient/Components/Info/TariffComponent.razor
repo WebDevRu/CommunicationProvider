@@ -1,0 +1,51 @@
+@namespace app.WebClient.Components.Info
+@using app.Core.Model
+@using app.Core.Services;
+@using System.ComponentModel.DataAnnotations;
+
+<div class="content">
+    <Button Type="@ButtonType.Primary">
+        Купить тариф
+    </Button>
+    <h3 class="heading">@_tariffRes.tariff.Title</h3>
+    <span>Описание:</span>
+    <p>@_tariffRes.tariff.Description</p>
+    <Row Gutter="16">
+        <Col Span="12">
+            <Statistic Title="Период в часах:" Value="_tariffRes.tariff.PeriodSeconds / 3600" />
+        </Col>
+        <Col Span="12">
+            <Statistic Title="Цена периода:" Value="_tariffRes.tariff.PeriodPaymentAmount"/>
+        </Col>
+    </Row>
+    <Row Gutter="16">
+        <Col Span="12">
+            <Statistic Title="Количество минут звонков:" Value="_tariffRes.limit.MobileCallsMinutes" />
+        </Col>
+        <Col Span="12">
+            <Statistic Title="Гб интернета:" Value="_tariffRes.limit.CableInternetSpeedMbs / 1024"/>
+        </Col>
+    </Row>
+</div>
+
+<style>
+    body {
+        background: #f0f2f5;
+    }
+</style>
+@code {
+    [Parameter]
+    public int tariffId { get; set; }
+
+    private CellularTariff _cellularTariff = new ();
+
+    private GetTariffRes _tariffRes;
+    
+    protected override void OnInitialized()
+    {
+        _tariffRes = _cellularTariff.GetTariff(new GetTariffArgs
+        {
+            Id = tariffId
+        });
+    }
+}

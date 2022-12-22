@@ -22,6 +22,18 @@ public struct EditCellularTariffArgs
     public int MobileInternetLimitMb;
     public int MobileCallsMinutes;
 }
+
+public struct GetTariffArgs
+{
+    public int Id;
+}
+
+public struct GetTariffRes
+{
+    public Limit limit;
+    public Tariff tariff;
+}
+
 public class CellularTariff
 {
     MasterContext dbContext = new ();
@@ -92,5 +104,17 @@ public class CellularTariff
             .Where((t) => t.ServiceType == "2")
             .Where((t) => t.PeriodPaymentAmount <= args.PeriodPaymentAmount)
             .ToArray();
+    }
+
+    public GetTariffRes GetTariff(GetTariffArgs args)
+    {
+        var tariff = dbContext.Tariffs.Where((t) => t.Id == args.Id).FirstOrDefault();
+        var limit = dbContext.Limits.Where((t) => t.Id == tariff.LimitId).FirstOrDefault();
+
+        return new GetTariffRes
+        {
+            tariff = tariff,
+            limit = limit,
+        };
     }
 }
