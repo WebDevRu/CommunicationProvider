@@ -1,0 +1,144 @@
+@namespace app.WebClient.Components.Admin
+
+@using System.ComponentModel.DataAnnotations;
+@using app.Core.Services;
+@using app.Core.Model
+@using System.Text.Json;
+@inject NotificationService _notice
+
+<Content>
+    <div class="site-layout-content">
+        <h1>Добавление абонента:</h1>
+        <div class="spacer"/>
+        
+        <div class="form">
+            <Form @ref="form"
+                  Model="@model"
+                  OnFinish="OnFinish"
+                  OnFinishFailed="OnFinishFailed"
+                  LabelColSpan="8"
+                  WrapperColSpan="16">
+                <FormItem Label="Почта">
+                    <Input @bind-Value="@context.Email" />
+                </FormItem>
+                <FormItem Label="Пароль">
+                    <InputPassword @bind-Value="@context.Password" />
+                </FormItem>
+                <FormItem Label="Имя">
+                    <Input @bind-Value="@context.FirstName" />
+                </FormItem>
+                <FormItem Label="Фамилия">
+                    <Input @bind-Value="@context.LastName" />
+                </FormItem>
+                <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                    <Button Type="@ButtonType.Primary" HtmlType="submit">
+                        Сохранить
+                    </Button>
+                    <Button OnClick="Reset">
+                        Отменить
+                    </Button>
+                </FormItem>
+            </Form>
+        </div>
+        <div class="spacer"/>
+        <h4>Список абонентов:</h4>
+        <Table @ref="table" TItem="Abonent" DataSource="@_subscribers">
+            <PropertyColumn Title="Id" Property="c=>c.Id" Sortable/>
+            <PropertyColumn Title="Почта" Property="c => c.Email" Sortable/>
+            <PropertyColumn Title="Имя" Property="c => c.FirstName" Sortable/>
+            <PropertyColumn Title="Фамилия" Property="c => c.LastName" Sortable/>
+            <PropertyColumn Title="Дата регистрации" Property="c => c.RegisteredAt" Sortable/>
+        </Table>
+    </div>
+</Content>
+
+@code {
+    public class Model
+    {
+        [Required]
+        public string Email { get; set; }
+        
+        [Required]
+        public string Password { get; set; }
+        
+        [Required]
+        public string FirstName { get; set; }
+        
+        [Required]
+        public string LastName { get; set; }
+    }
+
+    private Model model = new Model();
+    
+    ITable table;
+
+    public string[] DayName = {"None", "Monday", "Tuesday", "Wednesdays", "Thursday", "Friday", "Saturday", "Sunday"};
+    
+    private AdminSubscribers _adminSubscribers = new();
+    
+    private Form<Model> form;
+    
+    Abonent[] _subscribers;
+    
+    private void Reset(MouseEventArgs args)
+    {
+        form.Reset();
+    }
+    
+    private void OnFinish(EditContext editContext)
+    {
+        var args = new AddSubscriberArgs
+        {
+            Email = model.Email,
+
+            Password = model.Password,
+    
+            FirstName = model.FirstName,
+
+            LastName = model.LastName,
+        };
+
+        try
+        {
+            _adminSubscribers.AddSubscriber(args);
+            ShowSuccessNotification(model.FirstName);
+            form.Reset();
+            _subscribers = _adminSubscribers.GetSubscribers();
+        }
+        catch (Exception)
+        {
+            ShowErrorNotification();
+        }
+    }
+    
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ShowErrorNotification();
+    }
+    
+    private async void ShowSuccessNotification (string title)
+    {
+          
+        string key = $"open{DateTime.Now}";
+        await _notice.Open(new NotificationConfig()
+        {
+            Message = "Абонент успешно добавлен",
+            Key = key,
+            Description = title,
+        });
+    }
+    
+    private void ShowErrorNotification()
+    {
+        _=_notice.Error(new()
+        {
+            Message = "Произошла ошибка",
+            Description = "Повторите позднее"
+        });
+    }
+    
+    protected override void OnInitialized()
+    {
+        _subscribers = _adminSubscribers.GetSubscribers();
+    }
+}
